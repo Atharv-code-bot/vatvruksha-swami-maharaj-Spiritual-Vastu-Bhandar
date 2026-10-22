@@ -1,0 +1,6 @@
+firebase_functions~=0.5.0
+firebase_admin~=7.7.0
+requests
+paytmchecksum
+pycryptodome
+resend

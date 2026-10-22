@@ -1,0 +1,36 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.admin == true
+        && request.auth.token.email_verified == true;
+    }
+
+    // Public product images; only verified admins may upload, replace, or
+    // delete them. Uploads must be image files smaller than 5 MB.
+    match /products/{productId}/{fileName} {
+      allow read: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      allow delete: if isAdmin();
+    }
+
+    // Public category images, with the same admin-only upload restrictions.
+    match /categories/{categoryId}/{fileName} {
+      allow read: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      allow delete: if isAdmin();
+    }
+
+    // Everything else is denied by default.
+  }
+}

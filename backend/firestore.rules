@@ -1,0 +1,146 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Admin access requires a trusted custom claim and a verified email.
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.admin == true
+        && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function validAddress(data) {
+      return data.keys().hasAll([
+          'fullName', 'mobile', 'addressLine1', 'city',
+          'state', 'pincode', 'isDefault', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'fullName', 'mobile', 'addressLine1', 'addressLine2',
+          'landmark', 'city', 'state', 'pincode', 'isDefault',
+          'createdAt', 'updatedAt'
+        ])
+        && data.fullName is string
+        && data.mobile is string
+        && data.addressLine1 is string
+        && (!('addressLine2' in data) || data.addressLine2 is string)
+        && (!('landmark' in data) || data.landmark is string)
+        && data.city is string
+        && data.state is string
+        && data.pincode is string
+        && data.isDefault is bool;
+    }
+
+    // Categories: customers can read active categories; verified admins can
+    // read all categories and manage them.
+    match /categories/{categoryId} {
+      allow read: if isAdmin()
+        || (resource != null && resource.data.isActive == true);
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Products: customers can read active products only.
+    // Verified admins can create, update, and delete products.
+    match /products/{productId} {
+      allow read: if isAdmin()
+        || (resource != null && resource.data.isActive == true);
+
+      allow create, update: if isAdmin();
+
+       allow delete: if isAdmin();
+    }
+
+    // Customer profile. Firebase Auth is the source of truth for email.
+    // Admins cannot edit another user's profile.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasAll([
+          'name', 'email', 'mobile', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'name', 'email', 'mobile', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.mobile is string
+        && request.resource.data.email == request.auth.token.email;
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['name', 'mobile', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.mobile is string;
+
+      allow delete: if false;
+
+      match /addresses/{addressId} {
+        allow read: if isOwner(uid) || isAdmin();
+
+        allow create, update: if isOwner(uid)
+          && validAddress(request.resource.data);
+
+        allow delete: if isOwner(uid);
+      }
+    }
+
+    // Orders can be created/modified only by trusted backend functions,
+    // except verified admins may perform the two permitted fulfilment
+    // transitions directly from the admin dashboard.
+    match /orders/{orderId} {
+      allow read: if isAdmin()
+        || isOwner(resource.data.userId);
+
+      allow create: if false;
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'updatedAt', 'statusHistory'])
+        && request.resource.data.keys().hasAll(['status', 'updatedAt', 'statusHistory'])
+        && request.resource.data.statusHistory is list
+        && (
+          (
+            resource.data.keys().hasAny(['statusHistory'])
+            && resource.data.statusHistory is list
+            && request.resource.data.statusHistory.size()
+                 == resource.data.statusHistory.size() + 1
+          )
+          ||
+          (
+            !resource.data.keys().hasAny(['statusHistory'])
+            && request.resource.data.statusHistory.size() == 1
+          )
+        )
+        && request.resource.data.statusHistory[
+             request.resource.data.statusHistory.size() - 1
+           ].status == request.resource.data.status
+        && (
+          (
+            resource.data.status == 'confirmed'
+            && request.resource.data.status == 'shipped'
+            && (
+              resource.data.paymentMethod == 'cod'
+              || resource.data.payment.status == 'paid'
+            )
+          )
+          ||
+          (
+            resource.data.status == 'shipped'
+            && request.resource.data.status == 'delivered'
+          )
+        );
+
+      allow delete: if false;
+    }
+
+    // All collections not explicitly allowed above are denied by default.
+  }
+}

@@ -1,0 +1,260 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resend Email Test — Spiritual Vastu Bhandar</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f5f3ef;
+      color: #292524;
+      font: 16px/1.5 Arial, Helvetica, sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px #0000000d;
+    }
+    h1 { color: #713f12; margin-top: 0; }
+    h2 { font-size: 18px; margin-top: 26px; }
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: 600;
+    }
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d6d3d1;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+    button {
+      margin: 12px 8px 0 0;
+      padding: 11px 15px;
+      border: 0;
+      border-radius: 7px;
+      background: #713f12;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.secondary { background: #57534e; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .note {
+      padding: 12px;
+      background: #fff7ed;
+      border-left: 4px solid #c2410c;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .status {
+      padding: 10px 12px;
+      background: #f5f5f4;
+      border-radius: 7px;
+      overflow-wrap: anywhere;
+    }
+    pre {
+      min-height: 90px;
+      padding: 14px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #1c1917;
+      color: #fafaf9;
+      border-radius: 8px;
+    }
+    .small { color: #78716c; font-size: 13px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Spiritual Vastu Bhandar</h1>
+
+  <p>
+    Standalone Firebase Emulator page for testing the
+    <code>testResendEmail</code> callable.
+  </p>
+
+  <div class="note">
+    This page calls local Firebase emulators only. It does not create
+    an order or call Paytm. The backend sends the email to
+    <code>delivered@resend.dev</code>, Resend's test recipient.
+    Never enter your Resend API key on this page.
+  </div>
+
+  <h2>1. Emulator connection</h2>
+  <p class="status" id="connection">Connecting to local emulators...</p>
+
+  <h2>2. Sign in to the Auth emulator</h2>
+  <p class="small">
+    Use a test account in the local Auth emulator. If needed, create one
+    in <a href="http://127.0.0.1:4000/auth"
+          target="_blank" rel="noopener">Emulator UI → Authentication</a>.
+  </p>
+
+  <label for="email">Test account email</label>
+  <input id="email" type="email" autocomplete="username"
+         placeholder="test@example.com">
+
+  <label for="password">Test account password</label>
+  <input id="password" type="password" autocomplete="current-password"
+         placeholder="Password">
+
+  <button id="signIn">Sign in</button>
+  <button id="signOut" class="secondary" disabled>Sign out</button>
+  <p class="status" id="authState">Not signed in.</p>
+
+  <h2>3. Send the Resend test</h2>
+  <p>
+    Sign in, then click the button. It calls
+    <code>testResendEmail</code> with an empty payload.
+    The backend creates the test variables and product rows.
+  </p>
+
+  <button id="testEmail" disabled>Test Resend Email</button>
+
+  <h2>Output</h2>
+  <pre id="output">Ready. Start the Firebase emulators, then sign in.</pre>
+
+  <p class="small">
+    Auth: <code>127.0.0.1:9099</code> ·
+    Functions: <code>127.0.0.1:5001</code> ·
+    Project: <code>spiritual-vastu-bhandar</code> ·
+    Region: <code>asia-south1</code>
+  </p>
+</main>
+
+<script type="module">
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+  import {
+    getAuth,
+    connectAuthEmulator,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  import {
+    getFunctions,
+    connectFunctionsEmulator,
+    httpsCallable,
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+
+  const app = initializeApp({
+    apiKey: "demo-spiritual-vastu-bhandar",
+    authDomain: "spiritual-vastu-bhandar.firebaseapp.com",
+    projectId: "spiritual-vastu-bhandar",
+    appId: "1:1234567890:web:emulator-test",
+  });
+
+  const auth = getAuth(app);
+  const functions = getFunctions(app, "asia-south1");
+
+  connectAuthEmulator(auth, "http://127.0.0.1:9099", {
+    disableWarnings: true,
+  });
+  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+
+  const $ = (id) => document.getElementById(id);
+  const testResendEmail = httpsCallable(functions, "testResendEmail");
+
+  function log(title, value) {
+    $("output").textContent +=
+      "\n\n=== " + title + " ===\n" +
+      (typeof value === "string"
+        ? value
+        : JSON.stringify(value, null, 2));
+  }
+
+  function errorInfo(error) {
+    return {
+      code: error?.code || "unknown",
+      message: error?.message || String(error),
+    };
+  }
+
+  $("connection").textContent =
+    "Auth: http://127.0.0.1:9099 | Functions: " +
+    "http://127.0.0.1:5001 (asia-south1).";
+
+  onAuthStateChanged(auth, (user) => {
+    $("authState").textContent = user
+      ? `Signed in: ${user.email || "(no email)"} | UID: ${user.uid}`
+      : "Not signed in.";
+
+    $("signIn").disabled = !!user;
+    $("signOut").disabled = !user;
+    $("testEmail").disabled = !user;
+  });
+
+  $("signIn").addEventListener("click", async () => {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    if (!email || !password) {
+      log("Sign-in", "Enter both test account email and password.");
+      return;
+    }
+
+    $("signIn").disabled = true;
+
+    try {
+      const result = await signInWithEmailAndPassword(
+        auth, email, password
+      );
+
+      log("Sign-in succeeded", {
+        email: result.user.email,
+        uid: result.user.uid,
+      });
+    } catch (error) {
+      log("Sign-in failed", errorInfo(error));
+    } finally {
+      $("signIn").disabled = !!auth.currentUser;
+    }
+  });
+
+  $("signOut").addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      log("Sign-out", "Signed out from the Auth emulator.");
+    } catch (error) {
+      log("Sign-out failed", errorInfo(error));
+    }
+  });
+
+  $("testEmail").addEventListener("click", async () => {
+    if (!auth.currentUser) {
+      log("Resend test", "Sign in first.");
+      return;
+    }
+
+    $("testEmail").disabled = true;
+    log("Resend test", "Calling testResendEmail...");
+
+    try {
+      const result = await testResendEmail({});
+      log("Resend test succeeded", result.data);
+    } catch (error) {
+      log("Resend test failed", errorInfo(error));
+      log(
+        "Next check",
+        "Inspect the Functions emulator terminal for the server-side " +
+        "error. Do not share your API key."
+      );
+    } finally {
+      $("testEmail").disabled = !auth.currentUser;
+    }
+  });
+</script>
+</body>
+</html>

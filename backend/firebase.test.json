@@ -1,0 +1,14 @@
+
+{
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-south1",
+    "rules": "firestore.rules"
+  },
+  "emulators": {
+    "firestore": {
+      "port": 8081
+    },
+    "singleProjectMode": true
+  }
+}

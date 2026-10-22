@@ -1,0 +1,1935 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Spiritual Vastu Bhandar — Backend Test Dashboard</title>
+    <style>
+      :root {
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
+        color: #182230;
+        background: #f3f5f9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      header {
+        background: #17243a;
+        color: #fff;
+        padding: 22px max(18px, calc((100vw - 1180px) / 2));
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      header h1 {
+        font-size: 20px;
+        margin: 0 0 4px;
+      }
+      header p {
+        margin: 0;
+        color: #c8d3e3;
+        font-size: 13px;
+      }
+      main {
+        max-width: 1180px;
+        margin: 24px auto;
+        padding: 0 16px 36px;
+      }
+      .notice {
+        padding: 13px 15px;
+        border-radius: 10px;
+        background: #fff4d6;
+        border: 1px solid #f0d38b;
+        color: #614b11;
+        margin-bottom: 18px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+      .panel {
+        background: white;
+        border: 1px solid #e1e6ef;
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 3px 12px #18223008;
+        margin-bottom: 16px;
+      }
+      h2 {
+        font-size: 17px;
+        margin: 0 0 14px;
+      }
+      h3 {
+        font-size: 14px;
+        margin: 18px 0 8px;
+      }
+      .muted {
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .status {
+        font-size: 13px;
+        padding: 9px 10px;
+        border-radius: 8px;
+        background: #eef2f7;
+        margin: 12px 0;
+        overflow-wrap: anywhere;
+      }
+      .status.good {
+        background: #e6f7ed;
+        color: #17663a;
+      }
+      .status.bad {
+        background: #ffeded;
+        color: #9c2020;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 650;
+        color: #475467;
+        margin: 10px 0 5px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 11px;
+        border: 1px solid #cfd6e2;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 14px;
+        background: #fff;
+      }
+      textarea {
+        min-height: 70px;
+        resize: vertical;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 12px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 13px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 650;
+        cursor: pointer;
+        background: #263e63;
+        color: white;
+        margin: 8px 6px 0 0;
+      }
+      button.secondary {
+        background: #e9edf4;
+        color: #25334a;
+      }
+      button.danger {
+        background: #a52b2b;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 0 0 14px;
+      }
+      .pill {
+        padding: 7px 11px;
+        border-radius: 99px;
+        background: #eef2f7;
+        color: #344054;
+        font-size: 12px;
+      }
+      .pill.active {
+        background: #dce9ff;
+        color: #174a91;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .table-wrap {
+        overflow: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #edf0f5;
+        vertical-align: top;
+      }
+      th {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #667085;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: #111827;
+        color: #e5edf7;
+        border-radius: 10px;
+        padding: 13px;
+        font-size: 12px;
+        max-height: 360px;
+        overflow: auto;
+      }
+      .metric {
+        display: inline-block;
+        padding: 12px 14px;
+        background: #f5f7fb;
+        border: 1px solid #e5eaf2;
+        border-radius: 10px;
+        margin: 0 8px 8px 0;
+      }
+      .metric strong {
+        display: block;
+        font-size: 20px;
+      }
+      .metric span {
+        font-size: 12px;
+        color: #667085;
+      }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .small {
+        font-size: 12px;
+      }
+      .line {
+        height: 1px;
+        background: #edf0f5;
+        margin: 16px 0;
+      }
+      .product-thumb {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border: 1px solid #e1e6ef;
+        border-radius: 8px;
+        background: #f8fafc;
+      }
+      .preview-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .preview-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-width: 100px;
+        font-size: 11px;
+        color: #667085;
+        overflow-wrap: anywhere;
+      }
+      .file-input {
+        padding: 8px;
+      }
+      .danger-note {
+        color: #8b2525;
+        background: #fff0f0;
+        border: 1px solid #f4caca;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      @media (max-width: 820px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .grid2 {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 520px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+        header {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Spiritual Vastu Bhandar</h1>
+        <p>
+          Temporary deployed-backend test dashboard · Firebase project:
+          spiritual-vastu-bhandar
+        </p>
+      </div>
+      <div>
+        <span id="headerIdentity" class="small">Not signed in</span
+        ><br /><button id="signOutBtn" class="secondary" disabled>
+          Sign out
+        </button>
+      </div>
+    </header>
+    <main>
+      <div class="notice">
+        <strong>Testing safety:</strong> this page targets your REAL Firebase
+        project, not the emulator. Creating a COD order can reserve/decrement
+        real stock and send real emails. Paytm order creation reserves stock
+        too. Start with account/profile, category, product and image tests; only
+        create an order when you intentionally want one. The page enforces a 5
+        MB-per-image test limit and JPG/PNG/WebP types, but deployed Storage
+        rules remain authoritative. Never put Paytm or Resend secrets in this
+        file.
+      </div>
+      <div class="layout">
+        <aside>
+          <section class="panel">
+            <h2>1. Firebase configuration</h2>
+            <p class="muted">
+              Paste the public Web App config from Firebase Console → Project
+              settings → General → Your apps. For image tests, the Storage
+              bucket must exactly match the bucket shown in that config. These
+              values are public browser config, not backend secrets.
+            </p>
+            <label>Web API key</label
+            ><input id="apiKey" placeholder="Paste Firebase Web API key" />
+            <label>App ID</label
+            ><input id="appId" placeholder="Paste Firebase Web App ID" />
+            <label>Storage bucket (required for image tests)</label
+            ><input
+              id="storageBucket"
+              placeholder="Exact bucket from Firebase Web App config"
+            />
+            <label>Messaging sender ID (optional for this test)</label
+            ><input id="senderId" placeholder="Paste sender ID if available" />
+            <button id="connectBtn">Connect to deployed Firebase</button>
+            <div id="configStatus" class="status">
+              Not connected. Enter config and connect.
+            </div>
+          </section>
+          <section class="panel">
+            <h2>2. Sign in / create customer</h2>
+            <p class="muted">
+              Create an account here first. Email/password users should verify
+              their email before placing orders. Google sign-in normally returns
+              a verified email.
+            </p>
+            <label>Email</label
+            ><input
+              id="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+            />
+            <label>Password (email/password)</label
+            ><input
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="At least 6 characters"
+            />
+            <label>Name</label><input id="name" placeholder="Full name" />
+            <label>Mobile (no OTP for now)</label
+            ><input id="mobile" type="tel" placeholder="10-digit mobile" />
+            <button id="signupBtn" disabled>Create account</button
+            ><button id="loginBtn" class="secondary" disabled>Sign in</button>
+            <button id="googleBtn" class="secondary" disabled>
+              Continue with Google
+            </button>
+            <button id="verifyEmailBtn" class="secondary" disabled>
+              Send verification email
+            </button>
+            <div id="authStatus" class="status">Not signed in.</div>
+          </section>
+          <section class="panel">
+            <h2>How admin access works</h2>
+            <p class="muted">
+              There is one sign-in system. The dashboard reads the verified
+              Firebase ID token's <code>admin: true</code> custom claim. A
+              normal customer only sees the customer panel. An admin sees the
+              extra admin panel after refreshing their token or signing in
+              again.
+            </p>
+            <p class="muted">
+              Do not create an <code>admin</code> field in the users document.
+              Admin role is a server-controlled custom claim.
+            </p>
+          </section>
+        </aside>
+        <div>
+          <section class="panel">
+            <div class="section-head">
+              <h2>Account status</h2>
+              <button id="refreshTokenBtn" class="secondary" disabled>
+                Refresh ID token / claims
+              </button>
+            </div>
+            <div id="accountMetrics">
+              <p class="muted">Connect and sign in to see account details.</p>
+            </div>
+            <div id="profileStatus" class="status">Profile not saved yet.</div>
+            <button id="saveProfileBtn" disabled>
+              Save profile to users/{uid}
+            </button>
+            <p class="muted">
+              The profile document ID is the authenticated UID. This page never
+              asks the browser to choose a UID for ownership.
+            </p>
+          </section>
+
+          <section id="customerPanel" class="panel">
+            <div class="section-head">
+              <h2>Customer dashboard</h2>
+              <span class="pill">Customer flow</span>
+            </div>
+            <p class="muted">
+              Browse active categories and products (including images loaded
+              from Firebase Storage), select a variant, place COD or start Paytm
+              checkout, and inspect your own orders. Prices shown in the
+              catalogue come from Firestore; the order function calculates the
+              final total again on the server.
+            </p>
+            <button id="loadCategoriesCustomerBtn" class="secondary" disabled>
+              Load active categories
+            </button>
+            <div id="customerCategories" class="table-wrap">
+              <p class="muted">Categories not loaded.</p>
+            </div>
+            <button id="loadProductsBtn" disabled>Load active products</button>
+            <div id="productsList" class="table-wrap">
+              <p class="muted">Connect and sign in to load products.</p>
+            </div>
+            <div class="line"></div>
+            <h3>Test checkout</h3>
+            <div class="grid2">
+              <div>
+                <label>Product ID</label
+                ><input
+                  id="checkoutProductId"
+                  placeholder="Select a product above"
+                />
+              </div>
+              <div>
+                <label>Variant ID</label
+                ><input
+                  id="checkoutVariantId"
+                  placeholder="e.g. small, default, v1"
+                />
+              </div>
+              <div>
+                <label>Quantity</label
+                ><input
+                  id="checkoutQty"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value="1"
+                />
+              </div>
+              <div>
+                <label>Full name</label
+                ><input id="shipName" placeholder="Recipient name" />
+              </div>
+              <div>
+                <label>Mobile</label
+                ><input id="shipMobile" placeholder="Recipient mobile" />
+              </div>
+              <div>
+                <label>PIN code</label
+                ><input id="shipPincode" placeholder="6-digit PIN code" />
+              </div>
+              <div>
+                <label>Address line 1</label
+                ><input id="shipAddress1" placeholder="House / street" />
+              </div>
+              <div>
+                <label>Address line 2 (optional)</label
+                ><input id="shipAddress2" placeholder="Area / locality" />
+              </div>
+              <div>
+                <label>Landmark (optional)</label
+                ><input id="shipLandmark" placeholder="Landmark" />
+              </div>
+              <div>
+                <label>City</label><input id="shipCity" placeholder="City" />
+              </div>
+              <div>
+                <label>State</label><input id="shipState" placeholder="State" />
+              </div>
+            </div>
+            <button id="codBtn" disabled>Create COD order (real write)</button>
+            <button id="paytmBtn" disabled>
+              Start Paytm order (real write)
+            </button>
+            <button id="verifyPaytmBtn" class="secondary" disabled>
+              Verify latest Paytm order
+            </button>
+            <div id="checkoutStatus" class="status">No order created.</div>
+            <h3>Your orders</h3>
+            <button id="loadMyOrdersBtn" class="secondary" disabled>
+              Load my orders
+            </button>
+            <div id="myOrders" class="table-wrap">
+              <p class="muted">Sign in to load your orders.</p>
+            </div>
+          </section>
+
+          <section id="adminPanel" class="panel hidden">
+            <div class="section-head">
+              <h2>Admin dashboard</h2>
+              <span class="pill active">Admin claim detected</span>
+            </div>
+            <p class="muted">
+              This section appears only when the current verified ID token
+              contains <code>admin: true</code>. Firestore rules must
+              independently enforce admin permissions; hiding UI alone is not
+              security.
+            </p>
+            <h3>Add a product</h3>
+            <p class="muted">
+              Creates a NEW product using the agreed schema. Product images are
+              uploaded to Storage at
+              <code>products/{productId}/{filename}</code>; only the Storage
+              paths are saved in <code>images</code>. Prices are entered in
+              rupees and stored as integer paise. This test form does not edit
+              existing products or stock.
+            </p>
+            <div class="grid2">
+              <div>
+                <label>Product ID (lowercase letters, digits, hyphens)</label
+                ><input id="newProductId" placeholder="test-brass-diya" />
+              </div>
+              <div>
+                <label>Product name</label
+                ><input id="newProductName" placeholder="Brass Diya" />
+              </div>
+              <div>
+                <label>Slug</label
+                ><input id="newProductSlug" placeholder="brass-diya" />
+              </div>
+              <div>
+                <label>Category ID</label
+                ><input id="newProductCategory" placeholder="puja-items" />
+              </div>
+              <div>
+                <label>Variant ID (letters, digits, underscore)</label
+                ><input
+                  id="newVariantId"
+                  value="default"
+                  placeholder="default"
+                />
+              </div>
+              <div>
+                <label>Variant label</label
+                ><input
+                  id="newVariantLabel"
+                  value="Default"
+                  placeholder="Default"
+                />
+              </div>
+              <div>
+                <label>SKU</label
+                ><input id="newSku" placeholder="TEST-DIYA-01" />
+              </div>
+              <div>
+                <label>Selling price (₹)</label
+                ><input
+                  id="newPrice"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="99.00"
+                />
+              </div>
+              <div>
+                <label>MRP (₹)</label
+                ><input
+                  id="newMrp"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="129.00"
+                />
+              </div>
+              <div>
+                <label>Initial stock</label
+                ><input
+                  id="newStock"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="5"
+                />
+              </div>
+            </div>
+            <label>Product images (JPG, PNG, or WebP; select multiple)</label
+            ><input
+              id="newProductImages"
+              class="file-input"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+            />
+            <div id="productImagePreview" class="preview-row"></div>
+            <p class="muted">
+              Files upload to Firebase Storage. The Storage rules are
+              authoritative; a denied upload is a security/rules issue, not a
+              reason to weaken rules.
+            </p>
+            <label>Description</label
+            ><textarea
+              id="newDescription"
+              placeholder="Short product description"
+            ></textarea>
+            <label
+              ><input
+                id="newActive"
+                type="checkbox"
+                checked
+                style="width: auto; margin-right: 6px"
+              />
+              Product is active</label
+            >
+            <button id="addProductBtn" disabled>
+              Create product in Firestore
+            </button>
+            <div id="adminProductStatus" class="status">
+              Admin actions unavailable until an admin claim is detected.
+            </div>
+            <div class="line"></div>
+            <h3>Categories and category image storage</h3>
+            <p class="muted">
+              Create a category with the schema fields. Its image is uploaded to
+              <code>categories/{categoryId}/{filename}</code>; Firestore stores
+              the path in <code>imagePath</code>.
+            </p>
+            <div class="grid2">
+              <div>
+                <label>Category ID (lowercase letters, digits, hyphens)</label
+                ><input id="newCategoryId" placeholder="puja-items" />
+              </div>
+              <div>
+                <label>Category name</label
+                ><input id="newCategoryName" placeholder="Puja Items" />
+              </div>
+              <div>
+                <label>Sort order</label
+                ><input
+                  id="newCategorySort"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="1"
+                />
+              </div>
+              <div>
+                <label>Category image (optional)</label
+                ><input
+                  id="newCategoryImage"
+                  class="file-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                />
+              </div>
+            </div>
+            <label>Category description (optional)</label
+            ><textarea
+              id="newCategoryDescription"
+              placeholder="Short category description"
+            ></textarea>
+            <label
+              ><input
+                id="newCategoryActive"
+                type="checkbox"
+                checked
+                style="width: auto; margin-right: 6px"
+              />
+              Category is active</label
+            >
+            <button id="addCategoryBtn" disabled>
+              Create category in Firestore
+            </button>
+            <button id="loadCategoriesBtn" class="secondary" disabled>
+              Load categories
+            </button>
+            <div id="adminCategoryStatus" class="status">
+              Admin actions unavailable until an admin claim is detected.
+            </div>
+            <div id="categoriesList" class="table-wrap">
+              <p class="muted">Categories not loaded.</p>
+            </div>
+            <div class="line"></div>
+            <h3>Admin tools</h3>
+            <button id="loadAllOrdersBtn" class="secondary" disabled>
+              Load all orders
+            </button>
+            <button id="refreshClaimsBtn" class="secondary" disabled>
+              Refresh claims
+            </button>
+            <div id="allOrders" class="table-wrap">
+              <p class="muted">Admin orders not loaded.</p>
+            </div>
+            <h3>Manage admin access</h3>
+            <p class="muted">
+              Load customer profiles from <code>users</code>, select a person,
+              then grant or revoke the Firebase Auth custom claim. This does not
+              add a role field to Firestore. The selected account must already
+              exist in Firebase Authentication and have a verified email before
+              admin access can be granted.
+            </p>
+            <button id="loadCustomersForRoleBtn" class="secondary" disabled>
+              Load customer list
+            </button>
+            <div id="roleCustomerListStatus" class="status">
+              Load customer profiles to choose an account.
+            </div>
+            <div class="grid2">
+              <div>
+                <label>Select customer</label
+                ><select id="targetCustomerSelect" disabled>
+                  <option value="">Load customers first</option>
+                </select>
+              </div>
+              <div>
+                <label>Action</label
+                ><select id="targetAdminAction">
+                  <option value="true">Grant admin</option>
+                  <option value="false">Revoke admin</option>
+                </select>
+              </div>
+            </div>
+            <p id="selectedCustomerDetails" class="muted">
+              No customer selected.
+            </p>
+            <button id="setAdminRoleBtn" disabled>
+              Apply admin access change
+            </button>
+            <div id="adminRoleStatus" class="status">
+              No role change requested.
+            </div>
+            <p class="muted">
+              This list comes from Firestore <code>users</code> profiles, not
+              the entire Firebase Authentication directory. Accounts that have
+              not created a profile document will not appear. The backend
+              callable and Firestore rules must authorize this operation.
+            </p>
+          </section>
+
+          <section class="panel">
+            <h2>Debug output</h2>
+            <p class="muted">
+              Function errors and responses appear here. Don't share passwords,
+              ID tokens, or payment tokens publicly.
+            </p>
+            <pre id="output">Ready. Connect to Firebase to begin.</pre>
+            <button id="clearOutputBtn" class="secondary">Clear output</button>
+          </section>
+        </div>
+      </div>
+    </main>
+    <script type="module">
+      import {
+        initializeApp,
+        deleteApp,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        GoogleAuthProvider,
+        signInWithPopup,
+        sendEmailVerification,
+        signOut,
+        updateProfile,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        serverTimestamp,
+        collection,
+        query,
+        where,
+        getDocs,
+        orderBy,
+        limit,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import {
+        getStorage,
+        ref as storageRef,
+        uploadBytes,
+        getDownloadURL,
+        deleteObject,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+      import {
+        getFunctions,
+        httpsCallable,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+
+      const $ = (id) => document.getElementById(id);
+      let app = null,
+        auth = null,
+        db = null,
+        functions = null,
+        storage = null,
+        currentUser = null,
+        isAdmin = false,
+        lastPaytmOrderId = "";
+      const write = (title, data) => {
+        $("output").textContent +=
+          `\n\n=== ${title} ===\n` +
+          (typeof data === "string" ? data : JSON.stringify(data, null, 2));
+        $("output").scrollTop = $("output").scrollHeight;
+      };
+      const errorData = (e) => ({
+        code: e?.code || "unknown",
+        message: e?.message || String(e),
+      });
+      const status = (id, message, kind = "") => {
+        $(id).textContent = message;
+        $(id).className = "status " + kind;
+      };
+      const money = (paise) => "₹" + (Number(paise || 0) / 100).toFixed(2);
+      function callable(name) {
+        if (!functions) throw new Error("Connect to Firebase first.");
+        return httpsCallable(functions, name);
+      }
+      function requireStorage() {
+        if (!storage)
+          throw new Error(
+            "Storage bucket is not configured. Paste the exact Storage bucket from Firebase Console and reconnect.",
+          );
+      }
+      function safeFilename(name) {
+        const cleaned = String(name || "image")
+          .normalize("NFKD")
+          .replace(/[^a-zA-Z0-9._-]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(-90);
+        return cleaned || "image";
+      }
+      function validateImage(file) {
+        if (!file) return;
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type))
+          throw new Error(
+            `Unsupported image type for ${file.name}. Use JPG, PNG, or WebP.`,
+          );
+        if (file.size > 5 * 1024 * 1024)
+          throw new Error(
+            `${file.name} is larger than the test page's 5 MB per-image limit.`,
+          );
+      }
+      async function uploadImageFiles(folder, id, files) {
+        requireStorage();
+        const paths = [];
+        for (const file of files) {
+          validateImage(file);
+          const filename = `${Date.now()}_${crypto.randomUUID().slice(0, 8)}_${safeFilename(file.name)}`;
+          const path = `${folder}/${id}/${filename}`;
+          const objectRef = storageRef(storage, path);
+          await uploadBytes(objectRef, file, {
+            contentType: file.type,
+            customMetadata: { uploadedByUid: currentUser.uid },
+          });
+          paths.push(path);
+        }
+        return paths;
+      }
+      async function imageUrl(path) {
+        if (!path || !storage) return "";
+        try {
+          return await getDownloadURL(storageRef(storage, path));
+        } catch (e) {
+          write("Image URL could not be loaded", { path, ...errorData(e) });
+          return "";
+        }
+      }
+      async function cleanupUploadedPaths(paths) {
+        if (!storage) return;
+        for (const path of paths) {
+          try {
+            await deleteObject(storageRef(storage, path));
+          } catch (e) {
+            write("Storage cleanup warning", { path, ...errorData(e) });
+          }
+        }
+      }
+      function previewFiles(inputId, targetId) {
+        const files = Array.from($(inputId).files || []);
+        $(targetId).innerHTML = files
+          .map(
+            (f) =>
+              `<div class="preview-item"><span>${escapeHtml(f.name)}</span><span>${(f.size / 1024).toFixed(0)} KB</span></div>`,
+          )
+          .join("");
+      }
+      function toggleSignedIn(user) {
+        const signed = !!user;
+        [
+          "signOutBtn",
+          "refreshTokenBtn",
+          "saveProfileBtn",
+          "loadProductsBtn",
+          "loadCategoriesCustomerBtn",
+          "loadMyOrdersBtn",
+          "codBtn",
+          "paytmBtn",
+          "verifyEmailBtn",
+        ].forEach((id) => ($(id).disabled = !signed));
+        $("signupBtn").disabled = !!user || !app;
+        $("loginBtn").disabled = !!user || !app;
+        $("googleBtn").disabled = !!user || !app;
+        $("headerIdentity").textContent = user
+          ? `${user.email || user.uid} · ${isAdmin ? "ADMIN" : "CUSTOMER"}`
+          : "Not signed in";
+        $("accountMetrics").innerHTML = user
+          ? `<div class="metric"><strong>${escapeHtml(user.displayName || $("name").value || "—")}</strong><span>Name</span></div><div class="metric"><strong>${escapeHtml(user.email || "—")}</strong><span>Email</span></div><div class="metric"><strong>${user.emailVerified ? "Verified" : "Not verified"}</strong><span>Email status</span></div><div class="metric"><strong>${isAdmin ? "Admin" : "Customer"}</strong><span>Role from ID token</span></div><p class="muted">UID: ${escapeHtml(user.uid)}</p>`
+          : '<p class="muted">Connect and sign in to see account details.</p>';
+        $("adminPanel").classList.toggle("hidden", !signed || !isAdmin);
+        [
+          "addProductBtn",
+          "addCategoryBtn",
+          "loadCategoriesBtn",
+          "loadAllOrdersBtn",
+          "refreshClaimsBtn",
+          "setAdminRoleBtn",
+          "loadCustomersForRoleBtn",
+        ].forEach((id) => ($(id).disabled = !signed || !isAdmin));
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+      function configFromForm() {
+        return {
+          apiKey: $("apiKey").value.trim(),
+          authDomain: "spiritual-vastu-bhandar.firebaseapp.com",
+          projectId: "spiritual-vastu-bhandar",
+          storageBucket: $("storageBucket").value.trim() || undefined,
+          messagingSenderId: $("senderId").value.trim() || undefined,
+          appId: $("appId").value.trim(),
+        };
+      }
+      async function saveUserProfile() {
+        if (!currentUser) throw new Error("Sign in first.");
+        const name = $("name").value.trim() || currentUser.displayName || "";
+        const mobile = $("mobile").value.trim();
+        const profileRef = doc(db, "users", currentUser.uid);
+        const existing = await getDoc(profileRef);
+        const profileData = {
+          name,
+          email: currentUser.email || "",
+          mobile,
+          updatedAt: serverTimestamp(),
+        };
+        if (!existing.exists()) profileData.createdAt = serverTimestamp();
+        await setDoc(profileRef, profileData, { merge: true });
+        status(
+          "profileStatus",
+          "Profile saved to users/" + currentUser.uid,
+          "good",
+        );
+        write("Profile saved", {
+          collection: "users",
+          documentId: currentUser.uid,
+          name,
+          email: currentUser.email,
+          mobile,
+        });
+      }
+      async function ensureUserProfile() {
+        if (!currentUser) throw new Error("Sign in first.");
+
+        const profileRef = doc(db, "users", currentUser.uid);
+        const existing = await getDoc(profileRef);
+
+        // Never overwrite an existing profile during sign-in.
+        if (existing.exists()) {
+          write("Existing profile preserved", {
+            collection: "users",
+            documentId: currentUser.uid,
+            message: "Sign-in did not modify the saved name or mobile number.",
+          });
+          return;
+        }
+
+        // Create a profile only for a user who does not have one yet.
+        const profileData = {
+          name: currentUser.displayName || "",
+          email: currentUser.email || "",
+          mobile: "",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        };
+
+        await setDoc(profileRef, profileData);
+
+        status(
+          "profileStatus",
+          "Initial profile created for users/" + currentUser.uid,
+          "good",
+        );
+
+        write("Initial profile created", {
+          collection: "users",
+          documentId: currentUser.uid,
+          name: profileData.name,
+          email: profileData.email,
+          mobile: profileData.mobile,
+        });
+      }
+      async function refreshClaims() {
+        if (!currentUser) return;
+        const result = await currentUser.getIdTokenResult(true);
+        isAdmin =
+          result.claims.admin === true && currentUser.emailVerified === true;
+        toggleSignedIn(currentUser);
+        write("Refreshed ID token claims", {
+          email: currentUser.email,
+          emailVerified: currentUser.emailVerified,
+          adminClaim: result.claims.admin === true,
+          adminDashboardVisible: isAdmin,
+          claims: result.claims,
+        });
+        status(
+          "authStatus",
+          `Signed in as ${currentUser.email || currentUser.uid}. Email verified: ${currentUser.emailVerified}. Admin claim: ${result.claims.admin === true}.`,
+          "good",
+        );
+      }
+      $("connectBtn").onclick = async () => {
+        try {
+          const cfg = configFromForm();
+          if (!cfg.apiKey || !cfg.appId)
+            throw new Error(
+              "Enter the actual Firebase Web API key and Web App ID first.",
+            );
+          if (app) {
+            await signOut(auth).catch(() => {});
+            await deleteApp(app).catch(() => {});
+            app = null;
+            auth = null;
+            db = null;
+            functions = null;
+            storage = null;
+          }
+          app = initializeApp(cfg);
+          auth = getAuth(app);
+          db = getFirestore(app);
+          functions = getFunctions(app, "asia-south1");
+          storage = cfg.storageBucket ? getStorage(app) : null;
+          $("configStatus").textContent =
+            "Connected to deployed project spiritual-vastu-bhandar (asia-south1).";
+          $("configStatus").className = "status good";
+          ["signupBtn", "loginBtn", "googleBtn"].forEach(
+            (id) => ($(id).disabled = false),
+          );
+          onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            isAdmin = false;
+            if (user) {
+              try {
+                const t = await user.getIdTokenResult();
+                isAdmin =
+                  t.claims.admin === true && user.emailVerified === true;
+              } catch (e) {
+                write("Claim read error", errorData(e));
+              }
+              if (!$("name").value.trim() && user.displayName)
+                $("name").value = user.displayName;
+              if (user.email) $("email").value = user.email;
+              toggleSignedIn(user);
+              status(
+                "authStatus",
+                `Signed in: ${user.email || user.uid}. Verified: ${user.emailVerified}. Admin claim: ${isAdmin}.`,
+                "good",
+              );
+              $("saveProfileBtn").disabled = false;
+              if (!user.emailVerified) $("verifyEmailBtn").disabled = false;
+            } else {
+              toggleSignedIn(null);
+              status("authStatus", "Not signed in.");
+            }
+          });
+          write("Firebase connected", {
+            projectId: cfg.projectId,
+            region: "asia-south1",
+            storageBucket:
+              cfg.storageBucket || "NOT CONFIGURED — image tests unavailable",
+            note: "Requests go to deployed Cloud Functions; no emulator connections are enabled.",
+          });
+        } catch (e) {
+          status("configStatus", e.message, "bad");
+          write("Firebase connection failed", errorData(e));
+        }
+      };
+      $("signupBtn").onclick = async () => {
+        try {
+          const email = $("email").value.trim(),
+            password = $("password").value;
+          if (!email || password.length < 6)
+            throw new Error(
+              "Enter an email and a password of at least 6 characters.",
+            );
+          const cred = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password,
+          );
+          const name = $("name").value.trim();
+          if (name) await updateProfile(cred.user, { displayName: name });
+          await saveUserProfile();
+          await sendEmailVerification(cred.user);
+          status(
+            "authStatus",
+            "Account created. Verification email sent. Verify it before placing an order.",
+            "good",
+          );
+          write("Email/password account created", {
+            email: cred.user.email,
+            uid: cred.user.uid,
+            emailVerified: cred.user.emailVerified,
+            profileDocument: `users/${cred.user.uid}`,
+          });
+        } catch (e) {
+          status("authStatus", e.message, "bad");
+          write("Sign-up failed", errorData(e));
+        }
+      };
+      $("loginBtn").onclick = async () => {
+        try {
+          const r = await signInWithEmailAndPassword(
+            auth,
+            $("email").value.trim(),
+            $("password").value,
+          );
+          write("Signed in", {
+            email: r.user.email,
+            uid: r.user.uid,
+            emailVerified: r.user.emailVerified,
+          });
+
+          // Do not save or overwrite profile fields during sign-in.
+        } catch (e) {
+          status("authStatus", e.message, "bad");
+          write("Sign-in failed", errorData(e));
+        }
+      };
+      $("googleBtn").onclick = async () => {
+        try {
+          const r = await signInWithPopup(auth, new GoogleAuthProvider());
+
+          // Create the profile only if it does not already exist.
+          await ensureUserProfile();
+
+          write("Google sign-in complete", {
+            email: r.user.email,
+            uid: r.user.uid,
+            emailVerified: r.user.emailVerified,
+          });
+        } catch (e) {
+          status("authStatus", e.message, "bad");
+          write("Google sign-in failed", errorData(e));
+        }
+      };
+      $("verifyEmailBtn").onclick = async () => {
+        try {
+          if (!currentUser) throw new Error("Sign in first.");
+          await sendEmailVerification(currentUser);
+          status(
+            "authStatus",
+            "Verification email sent. Open it, verify, then refresh your ID token.",
+            "good",
+          );
+          write("Verification email sent", currentUser.email);
+        } catch (e) {
+          write("Verification email failed", errorData(e));
+        }
+      };
+      $("signOutBtn").onclick = async () => {
+        try {
+          await signOut(auth);
+          isAdmin = false;
+          write("Signed out", "Firebase session ended.");
+        } catch (e) {
+          write("Sign-out failed", errorData(e));
+        }
+      };
+      $("refreshTokenBtn").onclick = async () => {
+        try {
+          await currentUser.reload();
+          await refreshClaims();
+        } catch (e) {
+          write("Refresh token failed", errorData(e));
+        }
+      };
+      $("refreshClaimsBtn").onclick = async () => {
+        try {
+          await currentUser.reload();
+          await refreshClaims();
+        } catch (e) {
+          write("Refresh claims failed", errorData(e));
+        }
+      };
+      $("saveProfileBtn").onclick = async () => {
+        try {
+          await saveUserProfile();
+        } catch (e) {
+          status("profileStatus", e.message, "bad");
+          write("Profile save failed", errorData(e));
+        }
+      };
+      $("newProductImages").onchange = () => {
+        try {
+          for (const f of Array.from($("newProductImages").files || []))
+            validateImage(f);
+          previewFiles("newProductImages", "productImagePreview");
+        } catch (e) {
+          $("newProductImages").value = "";
+          $("productImagePreview").innerHTML = "";
+          status("adminProductStatus", e.message, "bad");
+        }
+      };
+      $("loadProductsBtn").onclick = async () => {
+        try {
+          const q = query(
+            collection(db, "products"),
+            where("isActive", "==", true),
+            orderBy("sortOrder", "asc"),
+            limit(100),
+          );
+          const snap = await getDocs(q);
+          const products = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          const rendered = [];
+          for (const p of products) {
+            const firstPath = Array.isArray(p.images)
+              ? p.images.find(Boolean)
+              : "";
+            const url = await imageUrl(firstPath);
+            const img = url
+              ? `<img class="product-thumb" src="${escapeHtml(url)}" alt="${escapeHtml(p.name)}" loading="lazy">`
+              : '<span class="muted">No image</span>';
+            rendered.push(
+              `<tr><td>${img}<br><strong>${escapeHtml(p.name)}</strong><br><span class="muted">${escapeHtml(p.id)}</span><br>${escapeHtml(p.description || "")}<br><span class="muted">${(p.images || []).length} image path(s)</span></td><td>${Object.entries(
+                p.variants || {},
+              )
+                .map(
+                  ([id, v]) =>
+                    `${escapeHtml(v.label || id)} (${escapeHtml(id)}) · ${money(v.price)} · stock ${Number(v.stock ?? 0)}${v.isActive === false ? " · inactive" : ""}`,
+                )
+                .join("<br>")}</td><td>${Object.entries(p.variants || {})
+                .filter(([id, v]) => v.isActive !== false)
+                .map(
+                  ([id, v]) =>
+                    `<button class="secondary chooseProduct" data-pid="${escapeHtml(p.id)}" data-vid="${escapeHtml(id)}" data-name="${escapeHtml(p.name)}" data-label="${escapeHtml(v.label || id)}">Select ${escapeHtml(v.label || id)}</button>`,
+                )
+                .join("")}</td></tr>`,
+            );
+          }
+          $("productsList").innerHTML = products.length
+            ? `<table><thead><tr><th>Product / image</th><th>Variant / price / stock</th><th>Choose</th></tr></thead><tbody>${rendered.join("")}</tbody></table>`
+            : '<p class="muted">No active products found. Admin can add a test product after the admin claim is set.</p>';
+          document.querySelectorAll(".chooseProduct").forEach(
+            (b) =>
+              (b.onclick = () => {
+                $("checkoutProductId").value = b.dataset.pid;
+                $("checkoutVariantId").value = b.dataset.vid;
+                write("Selected product", {
+                  productId: b.dataset.pid,
+                  variantId: b.dataset.vid,
+                  name: b.dataset.name,
+                  variant: b.dataset.label,
+                });
+              }),
+          );
+          write("Active products loaded", {
+            count: products.length,
+            productIds: products.map((p) => p.id),
+          });
+        } catch (e) {
+          $("productsList").textContent = e.message;
+          write("Product load failed", errorData(e));
+        }
+      };
+      function shipping() {
+        const s = {
+          fullName: $("shipName").value.trim(),
+          mobile: $("shipMobile").value.trim(),
+          addressLine1: $("shipAddress1").value.trim(),
+          city: $("shipCity").value.trim(),
+          state: $("shipState").value.trim(),
+          pincode: $("shipPincode").value.trim(),
+        };
+        if ($("shipAddress2").value.trim())
+          s.addressLine2 = $("shipAddress2").value.trim();
+        if ($("shipLandmark").value.trim())
+          s.landmark = $("shipLandmark").value.trim();
+        if (Object.values(s).some((v) => !String(v).trim()))
+          throw new Error(
+            "Fill full name, mobile, address line 1, city, state and PIN code.",
+          );
+        return s;
+      }
+      function checkoutPayload() {
+        if (!currentUser) throw new Error("Sign in first.");
+        if (!currentUser.emailVerified)
+          throw new Error("Verify your email before placing an order.");
+        const quantity = Number($("checkoutQty").value);
+        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10)
+          throw new Error("Quantity must be a whole number from 1 to 10.");
+        const productId = $("checkoutProductId").value.trim(),
+          variantId = $("checkoutVariantId").value.trim();
+        if (!productId || !variantId)
+          throw new Error("Select a product and variant first.");
+        return {
+          requestId: "webtest_" + crypto.randomUUID().replaceAll("-", ""),
+          items: [{ productId, variantId, quantity }],
+          shippingAddress: shipping(),
+        };
+      }
+      $("codBtn").onclick = async () => {
+        if (
+          !confirm(
+            "This calls the REAL deployed COD function. It may create an order, decrement stock and send emails. Continue?",
+          )
+        )
+          return;
+        try {
+          status("checkoutStatus", "Calling deployed createCodOrder…");
+          $("codBtn").disabled = true;
+          const payload = checkoutPayload();
+          write("createCodOrder request", payload);
+          const result = (await callable("createCodOrder")(payload)).data;
+          status(
+            "checkoutStatus",
+            `COD order created: ${result.orderId || result.orderNumber || "(see response)"}. Check the response below.`,
+            "good",
+          );
+          write("createCodOrder response", result);
+        } catch (e) {
+          status("checkoutStatus", e.message, "bad");
+          write("createCodOrder failed", errorData(e));
+        } finally {
+          $("codBtn").disabled = !currentUser;
+        }
+      };
+      $("paytmBtn").onclick = async () => {
+        if (
+          !confirm(
+            "This calls the REAL deployed createPaytmOrder function and reserves stock. It may create a pending payment order. Continue?",
+          )
+        )
+          return;
+        try {
+          status("checkoutStatus", "Calling deployed createPaytmOrder…");
+          $("paytmBtn").disabled = true;
+          const payload = checkoutPayload();
+          write("createPaytmOrder request", payload);
+          const result = (await callable("createPaytmOrder")(payload)).data;
+          lastPaytmOrderId = result.orderId || result.orderNumber || "";
+          $("verifyPaytmBtn").disabled = !lastPaytmOrderId;
+          status(
+            "checkoutStatus",
+            `Paytm order created: ${lastPaytmOrderId || "(see response)"}. Environment: ${result.payment?.environment || "unknown"}.`,
+            "good",
+          );
+          write("createPaytmOrder response", result);
+          if (result.payment?.environment === "production") {
+            write(
+              "SAFETY WARNING",
+              "The backend reports production Paytm environment. Checkout will not be opened by this test dashboard.",
+            );
+            status(
+              "checkoutStatus",
+              "Order created, but checkout was blocked because the backend reports production mode.",
+              "bad",
+            );
+            return;
+          }
+          if (!lastPaytmOrderId || !result.payment?.mid || !result.payment?.txnToken || !result.payment?.amount) {
+            throw new Error(
+              "Order was created, but the response is missing orderId, payment.mid, payment.txnToken, or payment.amount. See the response below.",
+            );
+          }
+          if (confirm("Paytm staging order created. Open Paytm checkout now?")) {
+            openPaytmCheckout(lastPaytmOrderId, result.payment);
+          } else {
+            status(
+              "checkoutStatus",
+              "Paytm order is pending. Checkout was not opened. Use Verify latest Paytm order to check its status.",
+              "",
+            );
+          }
+        } catch (e) {
+          status("checkoutStatus", e.message, "bad");
+          write("createPaytmOrder failed", errorData(e));
+        } finally {
+          $("paytmBtn").disabled = !currentUser;
+        }
+      };
+      function openPaytmCheckout(orderId, payment) {
+        const host = payment.environment === "production"
+          ? "https://secure.paytmpayments.com"
+          : "https://securestage.paytmpayments.com";
+        const scriptUrl = `${host}/merchantpgpui/checkoutjs/merchants/${encodeURIComponent(payment.mid)}.js`;
+        status("checkoutStatus", "Loading Paytm CheckoutJS…");
+        write("Paytm CheckoutJS script", { host, mid: payment.mid, orderId });
+
+        // Avoid loading duplicate CheckoutJS scripts when retrying in this page.
+        const existingScript = document.querySelector('script[data-paytm-checkout="true"]');
+        if (existingScript) existingScript.remove();
+        try { delete window.Paytm; } catch (_) {}
+
+        const script = document.createElement("script");
+        script.src = scriptUrl;
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        script.dataset.paytmCheckout = "true";
+        script.onload = () => {
+          if (!window.Paytm?.CheckoutJS) {
+            status("checkoutStatus", "Paytm CheckoutJS script loaded, but window.Paytm.CheckoutJS is unavailable. Check the browser console and network request.", "bad");
+            write("Paytm CheckoutJS unavailable", { scriptUrl });
+            return;
+          }
+
+          let transactionCallbackReceived = false;
+          const verifyFromServer = () => {
+            if (!currentUser) {
+              status("checkoutStatus", "Checkout ended. Sign in again, then click Verify latest Paytm order.", "bad");
+              return;
+            }
+            callable("verifyPaytmPayment")({ orderId })
+              .then((r) => {
+                write("Server-side Paytm verification after checkout", r.data);
+                status("checkoutStatus", "Backend checked the Paytm payment status. See Debug output; only the server verification result is authoritative.", "good");
+              })
+              .catch((e) => {
+                write("Server-side Paytm verification after checkout failed", errorData(e));
+                status("checkoutStatus", "Could not verify payment with the backend. Use Verify latest Paytm order and inspect Debug output.", "bad");
+              });
+          };
+
+          const config = {
+            root: "",
+            flow: "DEFAULT",
+            data: {
+              orderId,
+              token: payment.txnToken,
+              tokenType: "TXN_TOKEN",
+              amount: String(payment.amount),
+            },
+            merchant: { mid: payment.mid, redirect: false },
+            handler: {
+              notifyMerchant: function (eventName, data) {
+                write("Paytm checkout event", { eventName, data });
+                if ((eventName === "APP_CLOSED" || eventName === "SESSION_EXPIRED") && !transactionCallbackReceived) {
+                  status("checkoutStatus", "Paytm checkout closed. Checking payment status with the backend…");
+                  verifyFromServer();
+                }
+              },
+              transactionStatus: function (data) {
+                transactionCallbackReceived = true;
+                write("Paytm transaction callback (not proof of payment)", data);
+                try { window.Paytm.CheckoutJS.close(); } catch (_) {}
+                verifyFromServer();
+              },
+            },
+          };
+
+          try {
+            window.Paytm.CheckoutJS.onLoad(function () {
+              window.Paytm.CheckoutJS.init(config)
+                .then(() => {
+                  write("Paytm CheckoutJS initialized", { orderId, amount: payment.amount, environment: payment.environment });
+                  window.Paytm.CheckoutJS.invoke();
+                  status("checkoutStatus", "Paytm checkout invoked. Complete or close the payment screen to continue testing.", "good");
+                })
+                .catch((e) => {
+                  write("Paytm CheckoutJS init failed", errorData(e));
+                  status("checkoutStatus", "Paytm checkout initialization failed. See Debug output and browser console.", "bad");
+                });
+            });
+          } catch (e) {
+            write("Paytm CheckoutJS invocation setup failed", errorData(e));
+            status("checkoutStatus", "Could not initialize Paytm checkout. See Debug output.", "bad");
+          }
+        };
+        script.onerror = () => {
+          write("Paytm CheckoutJS script failed", { scriptUrl, message: "Browser could not load the Paytm script. Check network access, MID, and browser console." });
+          status("checkoutStatus", "Paytm CheckoutJS failed to load. See Debug output and browser console.", "bad");
+        };
+        document.head.appendChild(script);
+      }
+
+      $("verifyPaytmBtn").onclick = async () => {
+        try {
+          if (!lastPaytmOrderId)
+            throw new Error("No Paytm order ID saved in this page.");
+          const r = (
+            await callable("verifyPaytmPayment")({ orderId: lastPaytmOrderId })
+          ).data;
+          write("verifyPaytmPayment response", r);
+          status(
+            "checkoutStatus",
+            "Payment verification response received. See debug output.",
+            "good",
+          );
+        } catch (e) {
+          write("verifyPaytmPayment failed", errorData(e));
+          status("checkoutStatus", e.message, "bad");
+        }
+      };
+      $("loadMyOrdersBtn").onclick = async () => {
+        try {
+          const q = query(
+            collection(db, "orders"),
+            where("userId", "==", currentUser.uid),
+            orderBy("createdAt", "desc"),
+            limit(30),
+          );
+          const snap = await getDocs(q);
+          $("myOrders").innerHTML = snap.empty
+            ? '<p class="muted">No orders for this account.</p>'
+            : `<table><thead><tr><th>Order</th><th>Status</th><th>Payment</th><th>Total</th></tr></thead><tbody>${snap.docs
+                .map((d) => {
+                  const o = d.data();
+                  return `<tr><td>${escapeHtml(d.id)}<br><span class="muted">${escapeHtml(o.paymentMethod || "")}</span><br><span class="muted">${(o.items || []).map((i) => `${escapeHtml(i.productName || i.productId || "Item")}: ${escapeHtml(i.imagePath || "no imagePath snapshot")}`).join("<br>")}</span></td><td>${escapeHtml(o.status || "—")}</td><td>${escapeHtml(o.payment?.status || "—")}</td><td>${money(o.totals?.total)}</td></tr>`;
+                })
+                .join("")}</tbody></table>`;
+          write("My orders loaded", { count: snap.size });
+        } catch (e) {
+          $("myOrders").textContent = e.message;
+          write("My orders load failed", errorData(e));
+        }
+      };
+      $("addProductBtn").onclick = async () => {
+        let uploaded = [];
+        try {
+          if (!isAdmin || !currentUser?.emailVerified)
+            throw new Error(
+              "A signed-in admin with a verified email is required.",
+            );
+          const id = $("newProductId").value.trim(),
+            name = $("newProductName").value.trim(),
+            slug = $("newProductSlug").value.trim(),
+            categoryId = $("newProductCategory").value.trim(),
+            variantId = $("newVariantId").value.trim(),
+            label = $("newVariantLabel").value.trim(),
+            sku = $("newSku").value.trim();
+          if (!/^[a-z0-9-]{3,80}$/.test(id))
+            throw new Error(
+              "Product ID must be 3–80 lowercase letters, digits or hyphens.",
+            );
+          if (!/^[a-z0-9_]{1,40}$/.test(variantId))
+            throw new Error(
+              "Variant ID can contain lowercase letters, digits and underscore only.",
+            );
+          if (!/^[a-z0-9-]{1,100}$/.test(slug))
+            throw new Error(
+              "Slug must contain lowercase letters, digits and hyphens only.",
+            );
+          const price = Number($("newPrice").value),
+            mrp = Number($("newMrp").value),
+            stock = Number($("newStock").value),
+            files = Array.from($("newProductImages").files || []);
+          if (!name || !slug || !categoryId || !label || !sku)
+            throw new Error(
+              "Complete product name, slug, category ID, variant label and SKU.",
+            );
+          if (!Number.isFinite(price) || price <= 0)
+            throw new Error("Enter a valid selling price in rupees.");
+          if (!Number.isFinite(mrp) || mrp < price)
+            throw new Error("MRP must be at least the selling price.");
+          if (!Number.isInteger(stock) || stock < 0)
+            throw new Error("Stock must be a whole number >= 0.");
+          for (const file of files) validateImage(file);
+          const categorySnap = await getDoc(doc(db, "categories", categoryId));
+          if (!categorySnap.exists())
+            throw new Error(
+              `Category categories/${categoryId} does not exist. Create it first, or use an existing category ID.`,
+            );
+          const existingProduct = await getDoc(doc(db, "products", id));
+          if (existingProduct.exists())
+            throw new Error(
+              `products/${id} already exists. Choose a new ID; do not overwrite an existing product.`,
+            );
+          const allProducts = await getDocs(collection(db, "products"));
+          for (const d of allProducts.docs) {
+            const p = d.data();
+            if (p.slug === slug)
+              throw new Error(`Slug already used by products/${d.id}.`);
+            for (const v of Object.values(p.variants || {})) {
+              if (v.sku === sku)
+                throw new Error(`SKU already used by products/${d.id}.`);
+            }
+          }
+          if (
+            !confirm(
+              `Create NEW product "${name}" in the deployed Firestore database${files.length ? ` and upload ${files.length} image(s)` : ""}? This writes to the real project.`,
+            )
+          )
+            return;
+          status(
+            "adminProductStatus",
+            "Uploading product images to Firebase Storage…",
+          );
+          $("addProductBtn").disabled = true;
+          if (files.length)
+            uploaded = await uploadImageFiles("products", id, files);
+          const product = {
+            name,
+            slug,
+            description: $("newDescription").value.trim(),
+            color: "",
+            categoryId,
+            images: uploaded,
+            variants: {
+              [variantId]: {
+                label,
+                sku,
+                price: Math.round(price * 100),
+                mrp: Math.round(mrp * 100),
+                stock,
+                isActive: true,
+                sortOrder: 1,
+              },
+            },
+            isActive: $("newActive").checked,
+            sortOrder: 1000,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          };
+          try {
+            await setDoc(doc(db, "products", id), product);
+          } catch (e) {
+            await cleanupUploadedPaths(uploaded);
+            uploaded = [];
+            throw e;
+          }
+          status(
+            "adminProductStatus",
+            `Created products/${id}; uploaded ${product.images.length} image(s). Load active products to verify image display.`,
+            "good",
+          );
+          write("Product created", {
+            document: `products/${id}`,
+            product: {
+              ...product,
+              createdAt: "server timestamp",
+              updatedAt: "server timestamp",
+            },
+            imagePaths: uploaded,
+            storageBucket: storage?.app?.options?.storageBucket || null,
+          });
+          $("newProductImages").value = "";
+          $("productImagePreview").innerHTML = "";
+        } catch (e) {
+          status("adminProductStatus", e.message, "bad");
+          write("Product creation failed", errorData(e));
+        } finally {
+          $("addProductBtn").disabled = !currentUser || !isAdmin;
+        }
+      };
+      $("addCategoryBtn").onclick = async () => {
+        let uploadedPath = "";
+        try {
+          if (!isAdmin || !currentUser?.emailVerified)
+            throw new Error(
+              "A signed-in admin with a verified email is required.",
+            );
+          requireStorage();
+          const id = $("newCategoryId").value.trim(),
+            name = $("newCategoryName").value.trim(),
+            description = $("newCategoryDescription").value.trim(),
+            sortOrder = Number($("newCategorySort").value),
+            file = $("newCategoryImage").files?.[0] || null;
+          if (file) requireStorage();
+          if (!/^[a-z0-9-]{2,80}$/.test(id))
+            throw new Error(
+              "Category ID must be 2–80 lowercase letters, digits or hyphens.",
+            );
+          if (!name) throw new Error("Enter a category name.");
+          if (!Number.isInteger(sortOrder) || sortOrder < 0)
+            throw new Error("Sort order must be a whole number >= 0.");
+          if (file) validateImage(file);
+          const existing = await getDoc(doc(db, "categories", id));
+          if (existing.exists())
+            throw new Error(
+              `categories/${id} already exists. Choose another ID.`,
+            );
+          if (
+            !confirm(
+              `Create NEW category "${name}" in the deployed Firestore database${file ? " and upload its image" : ""}?`,
+            )
+          )
+            return;
+          $("addCategoryBtn").disabled = true;
+          status(
+            "adminCategoryStatus",
+            "Uploading category image and saving category…",
+          );
+          if (file) {
+            const paths = await uploadImageFiles("categories", id, [file]);
+            uploadedPath = paths[0];
+          }
+          const category = {
+            name,
+            description,
+            isActive: $("newCategoryActive").checked,
+            sortOrder,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          };
+          if (uploadedPath) category.imagePath = uploadedPath;
+          try {
+            await setDoc(doc(db, "categories", id), category);
+          } catch (e) {
+            if (uploadedPath) await cleanupUploadedPaths([uploadedPath]);
+            uploadedPath = "";
+            throw e;
+          }
+          status(
+            "adminCategoryStatus",
+            `Created categories/${id}${uploadedPath ? " with image" : ""}.`,
+            "good",
+          );
+          write("Category created", {
+            document: `categories/${id}`,
+            category: {
+              ...category,
+              createdAt: "server timestamp",
+              updatedAt: "server timestamp",
+            },
+            imagePath: uploadedPath || null,
+          });
+          $("newCategoryImage").value = "";
+        } catch (e) {
+          status("adminCategoryStatus", e.message, "bad");
+          write("Category creation failed", errorData(e));
+        } finally {
+          $("addCategoryBtn").disabled = !currentUser || !isAdmin;
+        }
+      };
+      $("loadCategoriesBtn").onclick = loadCategoriesAdmin;
+      async function loadCategoriesAdmin() {
+        try {
+          if (!isAdmin) throw new Error("Admin claim required.");
+          const snap = await getDocs(
+            query(
+              collection(db, "categories"),
+              orderBy("sortOrder", "asc"),
+              limit(100),
+            ),
+          );
+          const rows = [];
+          for (const d of snap.docs) {
+            const c = d.data();
+            const url = await imageUrl(c.imagePath);
+            rows.push(
+              `<tr><td>${url ? `<img class="product-thumb" src="${escapeHtml(url)}" alt="${escapeHtml(c.name)}">` : "—"}</td><td><strong>${escapeHtml(c.name || d.id)}</strong><br><span class="muted">${escapeHtml(d.id)}</span></td><td>${escapeHtml(c.description || "")}</td><td>${c.isActive ? "Active" : "Inactive"}</td><td>${escapeHtml(c.imagePath || "No image path")}</td></tr>`,
+            );
+          }
+          $("categoriesList").innerHTML = rows.length
+            ? `<table><thead><tr><th>Image</th><th>Category</th><th>Description</th><th>Status</th><th>Storage path</th></tr></thead><tbody>${rows.join("")}</tbody></table>`
+            : '<p class="muted">No categories found.</p>';
+          write("Admin categories loaded", { count: snap.size });
+        } catch (e) {
+          $("categoriesList").textContent = e.message;
+          write("Admin category load failed", errorData(e));
+        }
+      }
+      $("loadCategoriesCustomerBtn").onclick = async () => {
+        try {
+          const snap = await getDocs(
+            query(
+              collection(db, "categories"),
+              where("isActive", "==", true),
+              orderBy("sortOrder", "asc"),
+              limit(100),
+            ),
+          );
+          const rows = [];
+          for (const d of snap.docs) {
+            const c = d.data(),
+              url = await imageUrl(c.imagePath);
+            rows.push(
+              `<tr><td>${url ? `<img class="product-thumb" src="${escapeHtml(url)}" alt="${escapeHtml(c.name)}">` : "—"}</td><td>${escapeHtml(c.name || d.id)}</td><td>${escapeHtml(c.description || "")}</td><td><span class="muted">${escapeHtml(d.id)}</span></td></tr>`,
+            );
+          }
+          $("customerCategories").innerHTML = rows.length
+            ? `<table><thead><tr><th>Image</th><th>Category</th><th>Description</th><th>ID</th></tr></thead><tbody>${rows.join("")}</tbody></table>`
+            : '<p class="muted">No active categories found.</p>';
+          write("Active categories loaded for customer", { count: snap.size });
+        } catch (e) {
+          $("customerCategories").textContent = e.message;
+          write("Customer category load failed", errorData(e));
+        }
+      };
+      $("loadAllOrdersBtn").onclick = async () => {
+        try {
+          if (!isAdmin) throw new Error("Admin claim required.");
+          const q = query(
+            collection(db, "orders"),
+            orderBy("createdAt", "desc"),
+            limit(100),
+          );
+          const snap = await getDocs(q);
+          $("allOrders").innerHTML = snap.empty
+            ? '<p class="muted">No orders found.</p>'
+            : `<div class="table-wrap"><table><thead><tr><th>Order / item image paths</th><th>Customer UID</th><th>Status</th><th>Payment</th><th>Total</th></tr></thead><tbody>${snap.docs
+                .map((d) => {
+                  const o = d.data();
+                  return `<tr><td>${escapeHtml(d.id)}<br><span class="muted">${(o.items || []).map((i) => `${escapeHtml(i.productName || i.productId || "Item")}: ${escapeHtml(i.imagePath || "no imagePath snapshot")}`).join("<br>")}</span></td><td>${escapeHtml(o.userId || "—")}</td><td>${escapeHtml(o.status || "—")}</td><td>${escapeHtml(o.paymentMethod || "—")} / ${escapeHtml(o.payment?.status || "—")}</td><td>${money(o.totals?.total)}</td></tr>`;
+                })
+                .join("")}</tbody></table></div>`;
+          write("All orders loaded", { count: snap.size });
+        } catch (e) {
+          $("allOrders").textContent = e.message;
+          write("Admin orders load failed", errorData(e));
+        }
+      };
+      let roleCustomers = [];
+      $("loadCustomersForRoleBtn").onclick = async () => {
+        try {
+          if (!isAdmin || !currentUser?.emailVerified)
+            throw new Error(
+              "A signed-in admin with verified email is required.",
+            );
+          status("roleCustomerListStatus", "Loading customer profiles…");
+          const snap = await getDocs(
+            query(collection(db, "users"), limit(500)),
+          );
+          roleCustomers = snap.docs
+            .map((d) => ({ uid: d.id, ...d.data() }))
+            .sort((a, b) =>
+              (a.name || a.email || a.uid).localeCompare(
+                b.name || b.email || b.uid,
+              ),
+            );
+          const select = $("targetCustomerSelect");
+          select.innerHTML =
+            '<option value="">Choose a customer…</option>' +
+            roleCustomers
+              .map(
+                (u, i) =>
+                  `<option value="${i}">${escapeHtml(u.name || "(No name)")} — ${escapeHtml(u.email || "(No email)")} — ${escapeHtml(u.uid)}</option>`,
+              )
+              .join("");
+          select.disabled = roleCustomers.length === 0;
+          status(
+            "roleCustomerListStatus",
+            `Loaded ${roleCustomers.length} Firestore user profile(s). Only profiles with an email can be selected.`,
+            "good",
+          );
+          $("selectedCustomerDetails").textContent =
+            "Select a customer to see their account details.";
+          write("Customer profiles loaded for admin management", {
+            count: roleCustomers.length,
+          });
+        } catch (e) {
+          status("roleCustomerListStatus", e.message, "bad");
+          write("Customer list load failed", errorData(e));
+        }
+      };
+      $("targetCustomerSelect").onchange = () => {
+        const idx = $("targetCustomerSelect").value;
+        const u = idx === "" ? null : roleCustomers[Number(idx)];
+        $("selectedCustomerDetails").textContent = u
+          ? `Name: ${u.name || "—"} | Email: ${u.email || "—"} | UID: ${u.uid} | Mobile: ${u.mobile || "—"}`
+          : "No customer selected.";
+        $("setAdminRoleBtn").disabled = !isAdmin || !u || !u.email;
+      };
+      $("setAdminRoleBtn").onclick = async () => {
+        try {
+          if (!isAdmin || !currentUser?.emailVerified)
+            throw new Error(
+              "Current account must already be an admin with verified email.",
+            );
+          const idx = $("targetCustomerSelect").value;
+          if (idx === "")
+            throw new Error("Load the customer list and select a customer.");
+          const target = roleCustomers[Number(idx)];
+          if (!target || !target.email)
+            throw new Error(
+              "The selected profile has no email. Choose a profile with an email copied from Firebase Auth.",
+            );
+          const email = String(target.email).trim();
+          const makeAdmin = $("targetAdminAction").value === "true";
+          if (
+            target.uid === currentUser.uid &&
+            makeAdmin === false &&
+            !confirm("You are about to revoke your own admin access. Continue?")
+          )
+            return;
+          if (
+            !confirm(
+              `${makeAdmin ? "Grant" : "Revoke"} admin access for ${target.name || email} (${email})?`,
+            )
+          )
+            return;
+          const result = (await callable("setAdminRole")({ email, makeAdmin }))
+            .data;
+          status(
+            "adminRoleStatus",
+            `Role function returned: ${JSON.stringify(result)}. The selected account must refresh its Firebase ID token or sign out and sign in again.`,
+            "good",
+          );
+          write("setAdminRole response", {
+            targetUid: target.uid,
+            targetEmail: email,
+            makeAdmin,
+            result,
+          });
+        } catch (e) {
+          status("adminRoleStatus", e.message, "bad");
+          write("setAdminRole failed", errorData(e));
+        }
+      };
+      $("clearOutputBtn").onclick = () =>
+        ($("output").textContent = "Output cleared.");
+    </script>
+  </body>
+</html>

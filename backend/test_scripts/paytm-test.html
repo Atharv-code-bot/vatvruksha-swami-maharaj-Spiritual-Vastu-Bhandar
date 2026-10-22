@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Paytm Emulator Test</title>
+    <style>
+      body {
+        font: 16px system-ui;
+        max-width: 850px;
+        margin: 24px auto;
+        padding: 0 14px;
+        background: #f5f6f8;
+        color: #202124;
+      }
+      main {
+        background: white;
+        padding: 22px;
+        border-radius: 12px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin: 10px 0 4px;
+      }
+      input,
+      select {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 9px;
+        border: 1px solid #bbb;
+        border-radius: 6px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      button {
+        margin: 12px 8px 0 0;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: #111827;
+        color: #eee;
+        padding: 12px;
+        border-radius: 8px;
+      }
+      .note {
+        background: #fff4d6;
+        padding: 12px;
+        border-radius: 8px;
+      }
+      @media (max-width: 600px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Paytm staging flow tester</h1>
+      <p class="note">
+        <b>Emulator test only.</b> Use a test account and Paytm staging
+        credentials, never production credentials. Payment success must be
+        confirmed by backend <code>verifyPaytmPayment</code>, not a browser
+        redirect.
+      </p>
+      <h2>1. Firebase Auth Emulator</h2>
+      <div class="grid">
+        <div>
+          <label>Email</label
+          ><input id="email" value="cod-test@example.com" type="email" />
+        </div>
+        <div>
+          <label>Password</label
+          ><input
+            id="password"
+            type="password"
+            placeholder="Test account password"
+          />
+        </div>
+      </div>
+      <button id="login">Sign in</button
+      ><button id="logout" disabled>Sign out</button>
+      <p id="authState">Not signed in.</p>
+      <h2>2. Product and shipping</h2>
+      <p>
+        The backend calculates prices and gets UID from Firebase Auth. This page
+        sends no userId or price.
+      </p>
+      <div class="grid">
+        <div>
+          <label>Product ID</label
+          ><input id="productId" value="test-brass-diya" />
+        </div>
+        <div>
+          <label>Variant</label
+          ><select id="variantId">
+            <option>small</option>
+            <option>large</option>
+          </select>
+        </div>
+        <div>
+          <label>Quantity</label
+          ><input id="quantity" type="number" min="1" max="10" value="1" />
+        </div>
+        <div>
+          <label>Full name</label><input id="fullName" value="COD Test User" />
+        </div>
+        <div><label>Mobile</label><input id="mobile" value="9876543210" /></div>
+        <div><label>PIN code</label><input id="pincode" value="416001" /></div>
+        <div>
+          <label>Address line 1</label
+          ><input id="address1" value="1 Emulator Test Road" />
+        </div>
+        <div>
+          <label>Address line 2 (optional)</label><input id="address2" />
+        </div>
+        <div><label>Landmark (optional)</label><input id="landmark" /></div>
+        <div><label>City</label><input id="city" value="Kolhapur" /></div>
+        <div><label>State</label><input id="state" value="Maharashtra" /></div>
+      </div>
+      <button id="create" disabled>Create Paytm order</button
+      ><button id="verify" disabled>Verify latest order</button>
+      <h2>3. Output</h2>
+      <pre id="output">Start Firebase emulators, then sign in.</pre>
+      <p>
+        Serve locally, not via <code>file://</code>. In this folder run
+        <code>npx http-server -p 5500</code>, then open
+        <code>http://127.0.0.1:5500/paytm-test.html</code>.
+      </p>
+    </main>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import {
+        getAuth,
+        connectAuthEmulator,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import {
+        getFunctions,
+        connectFunctionsEmulator,
+        httpsCallable,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+      // Emulator config. Replace apiKey with your Firebase Web API key only if required.
+      const app = initializeApp({
+        apiKey: "demo-spiritual-vastu-bhandar",
+        authDomain: "spiritual-vastu-bhandar.firebaseapp.com",
+        projectId: "spiritual-vastu-bhandar",
+        appId: "1:1234567890:web:emulator-test",
+      });
+      const auth = getAuth(app),
+        functions = getFunctions(app, "asia-south1");
+      connectAuthEmulator(auth, "http://127.0.0.1:9099", {
+        disableWarnings: true,
+      });
+      connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+      const $ = (id) => document.getElementById(id);
+      let orderId = new URLSearchParams(location.search).get("orderId") || "";
+      const createPaytmOrder = httpsCallable(functions, "createPaytmOrder"),
+        verifyPaytmPayment = httpsCallable(functions, "verifyPaytmPayment");
+      function show(title, data) {
+        $("output").textContent +=
+          "\n\n=== " +
+          title +
+          " ===\n" +
+          (typeof data === "string" ? data : JSON.stringify(data, null, 2));
+      }
+      function err(e) {
+        return { code: e?.code || "unknown", message: e?.message || String(e) };
+      }
+      onAuthStateChanged(auth, (user) => {
+        $("authState").textContent = user
+          ? `Signed in: ${user.email}; UID: ${user.uid}; email verified: ${user.emailVerified}`
+          : "Not signed in.";
+        $("login").disabled = !!user;
+        $("logout").disabled = !user;
+        $("create").disabled = !user;
+        $("verify").disabled = !user || !orderId;
+      });
+      $("login").onclick = async () => {
+        try {
+          const r = await signInWithEmailAndPassword(
+            auth,
+            $("email").value.trim(),
+            $("password").value,
+          );
+          show("Auth Emulator sign-in", {
+            email: r.user.email,
+            uid: r.user.uid,
+            emailVerified: r.user.emailVerified,
+          });
+        } catch (e) {
+          show("Sign-in failed", err(e));
+        }
+      };
+      $("logout").onclick = async () => {
+        try {
+          await signOut(auth);
+          show("Signed out", "Emulator session ended.");
+        } catch (e) {
+          show("Sign-out failed", err(e));
+        }
+      };
+      $("create").onclick = async () => {
+        if (!auth.currentUser) return;
+        const quantity = Number($("quantity").value);
+        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) {
+          show("Invalid quantity", "Use whole number 1–10.");
+          return;
+        }
+        const shippingAddress = {
+          fullName: $("fullName").value.trim(),
+          mobile: $("mobile").value.trim(),
+          addressLine1: $("address1").value.trim(),
+          city: $("city").value.trim(),
+          state: $("state").value.trim(),
+          pincode: $("pincode").value.trim(),
+        };
+        if ($("address2").value.trim())
+          shippingAddress.addressLine2 = $("address2").value.trim();
+        if ($("landmark").value.trim())
+          shippingAddress.landmark = $("landmark").value.trim();
+        const payload = {
+          requestId: "paytm-test-" + crypto.randomUUID(),
+          items: [
+            {
+              productId: $("productId").value.trim(),
+              variantId: $("variantId").value,
+              quantity,
+            },
+          ],
+          shippingAddress,
+        };
+        show("Calling createPaytmOrder", {
+          ...payload,
+          note: "No userId or price is sent.",
+        });
+        $("create").disabled = true;
+        try {
+          const r = (await createPaytmOrder(payload)).data;
+          orderId = r.orderId;
+          $("verify").disabled = false;
+          show("Order response", r);
+          if (
+            r.payment?.txnToken &&
+            r.payment?.mid &&
+            orderId &&
+            confirm("Order created. Open Paytm checkout?")
+          )
+            openCheckout(orderId, r.payment);
+          else
+            show(
+              "Checkout not opened",
+              "Response needs payment.mid and payment.txnToken.",
+            );
+        } catch (e) {
+          show("createPaytmOrder failed", err(e));
+        } finally {
+          $("create").disabled = !auth.currentUser;
+        }
+      };
+      function openCheckout(id, p) {
+        // Keep CheckoutJS aligned with the Paytm API environment.
+        const host =
+          p.environment === "production"
+            ? "https://secure.paytmpayments.com"
+            : "https://securestage.paytmpayments.com";
+        const s = document.createElement("script");
+        s.src = `${host}/merchantpgpui/checkoutjs/merchants/${encodeURIComponent(p.mid)}.js`;
+        s.onload = () => {
+          if (!window.Paytm?.CheckoutJS) {
+            show("Checkout error", "Paytm CheckoutJS unavailable.");
+            return;
+          }
+          let transactionCallbackReceived = false;
+          const verifyFromServer = () => {
+            if (!auth.currentUser) {
+              show(
+                "Verification needed",
+                "Sign in again, then click Verify latest order.",
+              );
+              return;
+            }
+            verifyPaytmPayment({ orderId: id })
+              .then((r) =>
+                show("Server-side verification after checkout", r.data),
+              )
+              .catch((e) =>
+                show("Server-side verification after checkout failed", err(e)),
+              );
+          };
+          const config = {
+            root: "",
+            flow: "DEFAULT",
+            data: {
+              orderId: id,
+              token: p.txnToken,
+              tokenType: "TXN_TOKEN",
+              amount: String(p.amount),
+            },
+            merchant: { mid: p.mid, redirect: false },
+            handler: {
+              notifyMerchant: function (eventName, data) {
+                show("Paytm event", { eventName, data });
+                if (
+                  (eventName === "APP_CLOSED" ||
+                    eventName === "SESSION_EXPIRED") &&
+                  !transactionCallbackReceived
+                ) {
+                  show(
+                    "Checkout ended",
+                    "Checking the order with our backend; the browser event is not proof of payment.",
+                  );
+                  verifyFromServer();
+                }
+              },
+              transactionStatus: function (data) {
+                transactionCallbackReceived = true;
+                show(
+                  "Paytm transaction callback (untrusted until server verification)",
+                  data,
+                );
+                try {
+                  window.Paytm.CheckoutJS.close();
+                } catch (_) {}
+                verifyFromServer();
+              },
+            },
+          };
+          window.Paytm.CheckoutJS.onLoad(function () {
+            window.Paytm.CheckoutJS.init(config)
+              .then(() => window.Paytm.CheckoutJS.invoke())
+              .catch((e) => show("Checkout init failed", String(e)));
+          });
+        };
+        s.onerror = () =>
+          show("Checkout script failed", "Check staging MID and network.");
+        document.head.appendChild(s);
+      }
+      $("verify").onclick = async () => {
+        if (!auth.currentUser || !orderId) return;
+        $("verify").disabled = true;
+        try {
+          show(
+            "Server-side verification",
+            (await verifyPaytmPayment({ orderId })).data,
+          );
+        } catch (e) {
+          show("verifyPaytmPayment failed", err(e));
+        } finally {
+          $("verify").disabled = !auth.currentUser || !orderId;
+        }
+      };
+      if (orderId)
+        show("Order ID from URL", {
+          orderId,
+          note: "Sign in as the owner and click Verify latest order.",
+        });
+    </script>
+  </body>
+</html>

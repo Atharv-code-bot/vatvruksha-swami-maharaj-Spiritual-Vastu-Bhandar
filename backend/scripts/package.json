@@ -1,0 +1,14 @@
+
+{
+  "name": "make-first-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "One-time Firebase admin bootstrap utility",
+  "main": "make-first-admin.js",
+  "scripts": {
+    "run": "node make-first-admin.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.10.0"
+  }
+}
