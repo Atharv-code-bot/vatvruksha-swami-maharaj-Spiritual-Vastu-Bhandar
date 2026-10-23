@@ -1,0 +1,561 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-saffron: #C99A35;
+  --color-saffron-light: #E7C875;
+  --color-saffron-dark: #A87820;
+  --color-saffron-50: #FFFAE9;
+
+  --color-maroon: #8A6928;
+  --color-maroon-light: #A88436;
+  --color-maroon-dark: #6E501D;
+  --color-maroon-50: #FBF4DF;
+
+  --color-gold: #C9A448;
+  --color-gold-light: #E9D18A;
+  --color-gold-dark: #947124;
+  --color-gold-50: #FFFBEF;
+
+  --color-cream: #FFFCF2;
+  --color-cream-dark: #F8F0D9;
+  --color-cream-darker: #EDE0B9;
+
+  --color-brown: #332817;
+  --color-brown-light: #594629;
+  --color-brown-medium: #78602E;
+
+  /* Fonts */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Poppins', system-ui, sans-serif;
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.4s ease-out;
+  --animate-slide-in-right: slideInRight 0.35s ease-out;
+  --animate-marquee: marquee 30s linear infinite;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+/* Base styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', system-ui, sans-serif;
+  background-color: #FFFCF2;
+  color: #2B1A14;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  line-height: 1.3;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F5EDDA;
+}
+::-webkit-scrollbar-thumb {
+  background: #C9962B;
+  border-radius: 3px;
+}
+
+/* Gold divider ornament */
+.gold-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9962B, transparent);
+}
+
+/* Section title ornament */
+.section-ornament {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #C9962B;
+  font-size: 1.25rem;
+}
+
+/* Card hover transition */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(43, 26, 20, 0.15);
+}
+
+/* Button base */
+.btn-primary {
+  background: linear-gradient(135deg, #A88436 0%, #C9A448 100%);
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.025em;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #8A6928 0%, #A88436 100%);
+  box-shadow: 0 4px 20px rgba(168, 132, 54, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #A87820 0%, #C9962B 50%, #DEB554 100%);
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.025em;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-gold:hover {
+  box-shadow: 0 4px 20px rgba(201, 150, 43, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-whatsapp:hover {
+  background: #128C7E;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.35);
+}
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(90deg, #F5EDDA 25%, #EDE0C4 50%, #F5EDDA 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Cart drawer overlay */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 26, 20, 0.5);
+  z-index: 49;
+  backdrop-filter: blur(2px);
+}
+
+/* Tab active underline */
+.tab-active {
+  color: #8A6928;
+  border-bottom: 2px solid #C9A448;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #C9962B;
+  outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #8A6928;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* Badge */
+.badge-sale {
+  background: #8A6928;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-new {
+  background: #4A7C59;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-best {
+  background: #C9962B;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Price styles */
+.price-sale {
+  color: #8A6928;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.price-original {
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}
+
+/* Phase 8: storefront visual refinement — styling only, no behavior changes. */
+:root {
+  --svb-ink: #332817;
+  --svb-muted: #786B50;
+  --svb-paper: #FFFCF2;
+  --svb-border: #E9DDBB;
+  --svb-maroon: #8A6928;
+  --svb-maroon-deep: #6E501D;
+  --svb-gold: #C9A448;
+  --svb-shadow: 0 12px 34px rgba(55, 31, 20, .08);
+  --svb-shadow-hover: 0 20px 44px rgba(55, 31, 20, .14);
+}
+
+body {
+  color: var(--svb-ink);
+  background: var(--svb-paper);
+  line-height: 1.65;
+}
+
+::selection { background: #ead4a5; color: #351b13; }
+
+/* Smoother, consistent interaction states */
+a, button, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea { font: inherit; }
+button:not(:disabled) { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .58; }
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--svb-gold) !important;
+  box-shadow: 0 0 0 3px rgba(187, 138, 43, .15);
+}
+
+/* Primary actions: premium, consistent and accessible */
+.btn-primary, .btn-gold, .btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  min-height: 44px;
+  border-radius: 999px;
+  padding: .78rem 1.45rem;
+  line-height: 1.2;
+  box-shadow: 0 5px 14px rgba(81, 21, 30, .10);
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-primary { background: linear-gradient(135deg, var(--svb-maroon), var(--svb-maroon-deep)); }
+.btn-gold { background: linear-gradient(135deg, #a87920, #d1a348); }
+.btn-whatsapp { border-radius: 999px; }
+.btn-primary:hover, .btn-gold:hover, .btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(81, 21, 30, .18);
+}
+
+/* Product and category cards retain their markup and actions. */
+.product-card, .category-tile, [class*="shadow-card"] {
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.product-card {
+  overflow: hidden;
+  border-radius: 1rem;
+  background: #fff;
+  border: 1px solid rgba(234, 223, 206, .82);
+  box-shadow: 0 5px 18px rgba(55, 31, 20, .045);
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--svb-shadow-hover);
+  border-color: #d9c39a;
+}
+
+/* Product photography */
+.product-card img, .category-tile img {
+  transition: transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.product-card:hover img, .category-tile:hover img { transform: scale(1.035); }
+
+/* Softer panel borders and card surfaces across account, checkout and order pages. */
+.bg-white.rounded-2xl, .bg-white.rounded-xl, .bg-white.rounded-lg {
+  border-color: var(--svb-border);
+}
+.shadow-sm { box-shadow: 0 5px 20px rgba(55, 31, 20, .055); }
+
+/* Store header refinement without changing navigation logic. */
+header.sticky {
+  border-bottom-color: rgba(187, 138, 43, .22);
+  backdrop-filter: saturate(1.2) blur(12px);
+}
+header.sticky.bg-white { background: rgba(255, 253, 248, .94); }
+header.sticky.bg-cream { background: rgba(255, 248, 236, .94); }
+
+/* Hero and section rhythm */
+section[aria-labelledby] { scroll-margin-top: 6rem; }
+.gold-divider { margin-inline: auto; max-width: 28rem; }
+
+/* Clear hover states for links and icon controls */
+a:not(.btn-primary):not(.btn-gold):not(.btn-whatsapp) {
+  transition: color .18s ease;
+}
+button.rounded-lg, button.rounded-xl, a.rounded-lg, a.rounded-xl {
+  transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .btn-primary, .btn-gold, .btn-whatsapp { padding: .76rem 1.1rem; }
+  .product-card { border-radius: .85rem; }
+}
+
+/* Phase 9: responsive layout hardening. CSS-only: preserve all component logic and functions. */
+html, body, #root { min-width: 0; width: 100%; }
+body { overflow-x: clip; }
+#root, main, section, article, aside, form { min-width: 0; }
+img, video, iframe, canvas, svg { max-width: 100%; }
+input, select, textarea, button { max-width: 100%; }
+input, select, textarea { min-width: 0; }
+
+/* Let long catalogue/account values wrap instead of widening the viewport. */
+.break-long-content { overflow-wrap: anywhere; }
+
+/* Avoid hover-only affordances on touch devices and keep controls comfortable to tap. */
+@media (hover: none) and (pointer: coarse) {
+  button, [role="button"], a { -webkit-tap-highlight-color: transparent; }
+  button, [role="button"] { touch-action: manipulation; }
+  .product-card:hover, .category-tile:hover { transform: none; }
+  .product-card:hover img, .category-tile:hover img { transform: none; }
+}
+
+/* Tablet and small laptop widths. */
+@media (max-width: 1024px) {
+  .container, [class*="max-w-7xl"] { max-width: 100%; }
+  .product-card .p-4 { padding: .85rem; }
+}
+
+/* Phones and narrow tablet portrait. */
+@media (max-width: 767px) {
+  html { scroll-padding-top: 5rem; }
+  body { font-size: 15px; }
+  h1 { font-size: clamp(1.75rem, 7vw, 2.35rem); }
+  h2 { font-size: clamp(1.4rem, 5.5vw, 1.9rem); }
+
+  /* Main content gutters remain compact without changing page markup. */
+  main .max-w-7xl, main .max-w-6xl, main .max-w-5xl,
+  main .max-w-4xl, main .max-w-3xl, main .max-w-2xl {
+    max-width: 100%;
+  }
+  main [class*="px-8"], main [class*="px-10"], main [class*="px-14"] {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Product and category grids: retain two cards per row on phones. */
+  .product-card { border-radius: .8rem; }
+  .product-card .p-4 { padding: .65rem; }
+  .product-card .price-sale { font-size: .95rem; }
+  .product-card button { min-height: 40px; }
+  .product-card .absolute.top-3 { top: .45rem; }
+  .product-card .absolute.left-3 { left: .45rem; }
+  .product-card .absolute.right-3 { right: .45rem; }
+  .product-card .absolute button { min-width: 40px; min-height: 40px; }
+
+  /* Prevent forms and order summaries from overflowing narrow screens. */
+  form { max-width: 100%; }
+  input, select, textarea { font-size: 16px; }
+  table { min-width: 36rem; }
+  .overflow-x-auto { max-width: 100%; overscroll-behavior-x: contain; }
+  pre, code { overflow-wrap: anywhere; }
+
+  /* Keep fixed drawers inside the viewport on the smallest devices. */
+  [role="dialog"].fixed { max-width: 100vw; }
+  .fixed.inset-y-0.left-0 { width: min(20rem, 88vw); }
+
+  /* Large split layouts become a single column when Tailwind's breakpoint is too late. */
+  .min-h-\[620px\] { min-height: auto; }
+}
+
+@media (max-width: 420px) {
+  .product-card .p-4 { padding: .55rem; }
+  .product-card .text-\[11px\] { font-size: .625rem; }
+  .product-card .absolute.top-3 button { padding: .55rem; }
+  .btn-primary, .btn-gold, .btn-whatsapp { width: auto; max-width: 100%; }
+  .mobile-full-width, form button { max-width: 100%; }
+}
+
+/* Landscape phones: don't let fixed drawers consume the entire screen height. */
+@media (max-width: 767px) and (orientation: landscape) {
+  .fixed.inset-y-0.left-0 { overflow-y: auto; }
+}
+
+/* Phase 10: product detail mobile quantity control layout. */
+@media (max-width: 640px) {
+  .product-quantity-control { width: 100%; }
+  .product-quantity-control > div { min-height: 44px; }
+}
+
+/* Phase 11: mobile product-card price and add-to-cart layout.
+   CSS-only refinement; no component logic or existing functions changed. */
+@media (max-width: 640px) {
+  .product-card .p-4 > .flex.items-center.justify-between.gap-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: .65rem;
+    width: 100%;
+  }
+
+  .product-card .p-4 > .flex.items-center.justify-between.gap-2 > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: .4rem;
+    row-gap: .2rem;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .product-card .price-sale {
+    font-size: clamp(.9rem, 4vw, 1.05rem);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .product-card .price-original {
+    margin-left: 0 !important;
+    font-size: .78rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .product-card .p-4 > .flex.items-center.justify-between.gap-2 > div > span:last-child {
+    margin-left: 0;
+  }
+
+  .product-card .p-4 > .flex.items-center.justify-between.gap-2 > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    padding: .7rem .85rem;
+    font-size: .875rem;
+    white-space: normal;
+  }
+
+  .product-card .p-4 > .flex.items-center.justify-between.gap-2 > button span {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-card .p-4 > .flex.items-center.justify-between.gap-2 > div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .product-card .price-original { margin-left: 0 !important; }
+}

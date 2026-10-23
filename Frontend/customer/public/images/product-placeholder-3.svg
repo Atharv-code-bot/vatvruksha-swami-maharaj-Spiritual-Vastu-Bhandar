@@ -1,0 +1,16 @@
+<svg width="900" height="900" viewBox="0 0 900 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="900" fill="#FFF8EC"/>
+  <rect x="50" y="50" width="800" height="800" rx="40" fill="url(#paint0_linear)"/>
+  <circle cx="450" cy="350" r="170" fill="#FFF8EC" fill-opacity="0.12"/>
+  <path d="M360 620C360 537 418 470 500 470C582 470 640 537 640 620V690H360V620Z" fill="#FFF8EC" fill-opacity="0.8"/>
+  <path d="M420 340C420 300 452 268 492 268H508C548 268 580 300 580 340V470H420V340Z" fill="#FFF8EC" fill-opacity="0.8"/>
+  <circle cx="450" cy="270" r="46" fill="#FFF8EC" fill-opacity="0.8"/>
+  <text x="450" y="785" text-anchor="middle" fill="#FFF8EC" font-family="Verdana, Arial, sans-serif" font-size="44" font-weight="700">Divine Gift</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="93" y1="83" x2="817" y2="809" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5C1620"/>
+      <stop offset="0.46" stop-color="#C9962B"/>
+      <stop offset="1" stop-color="#E8741A"/>
+    </linearGradient>
+  </defs>
+</svg>

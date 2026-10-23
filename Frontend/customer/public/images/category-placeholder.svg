@@ -1,0 +1,19 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="1000" fill="#FFF8EC"/>
+  <rect x="40" y="40" width="720" height="920" rx="36" fill="url(#paint0_linear)"/>
+  <circle cx="400" cy="400" r="200" fill="#FFF8EC" fill-opacity="0.2"/>
+  <path d="M400 240C465 240 520 290 520 355C520 410 488 456 440 486V610H360V486C312 456 280 410 280 355C280 290 335 240 400 240Z" fill="#FFF8EC" fill-opacity="0.9"/>
+  <path d="M350 515H450V660C450 698 421 730 385 730H415C379 730 350 698 350 660V515Z" fill="#FFF8EC" fill-opacity="0.9"/>
+  <path d="M310 325L265 370L310 415L355 370L310 325Z" fill="#C9962B" fill-opacity="0.7"/>
+  <path d="M490 325L535 370L490 415L445 370L490 325Z" fill="#C9962B" fill-opacity="0.7"/>
+  <circle cx="400" cy="353" r="18" fill="#C9962B" fill-opacity="0.72"/>
+  <path d="M400 700L440 760H360L400 700Z" fill="#C9962B" fill-opacity="0.7"/>
+  <text x="400" y="845" text-anchor="middle" fill="#FFF8EC" font-family="Verdana, Arial, sans-serif" font-size="58" font-weight="700">Sacred Item</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="70" y1="95" x2="713" y2="933" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7A1F2B"/>
+      <stop offset="0.5" stop-color="#E8741A"/>
+      <stop offset="1" stop-color="#C9962B"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,15 @@
+<svg width="900" height="900" viewBox="0 0 900 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="900" fill="#FFF8EC"/>
+  <rect x="50" y="50" width="800" height="800" rx="40" fill="url(#paint0_linear)"/>
+  <circle cx="450" cy="350" r="180" fill="#FFF8EC" fill-opacity="0.18"/>
+  <path d="M450 210C525 210 585 268 585 343C585 406 545 455 490 490V607H410V490C355 455 315 406 315 343C315 268 375 210 450 210Z" fill="#FFF8EC" fill-opacity="0.9"/>
+  <path d="M405 530H495V650C495 692 466 726 428 726H472C434 726 405 692 405 650V530Z" fill="#FFF8EC" fill-opacity="0.9"/>
+  <text x="450" y="760" text-anchor="middle" fill="#FFF8EC" font-family="Verdana, Arial, sans-serif" font-size="48" font-weight="700">Idol</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="95" y1="80" x2="785" y2="802" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7A1F2B"/>
+      <stop offset="0.46" stop-color="#E8741A"/>
+      <stop offset="1" stop-color="#C9962B"/>
+    </linearGradient>
+  </defs>
+</svg>

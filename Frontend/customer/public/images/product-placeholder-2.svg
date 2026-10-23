@@ -1,0 +1,15 @@
+<svg width="900" height="900" viewBox="0 0 900 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="900" fill="#FFF8EC"/>
+  <rect x="50" y="50" width="800" height="800" rx="40" fill="url(#paint0_linear)"/>
+  <circle cx="450" cy="380" r="210" fill="#FFF8EC" fill-opacity="0.14"/>
+  <path d="M330 615L450 245L570 615H330Z" fill="#FFF8EC" fill-opacity="0.8"/>
+  <path d="M395 560H505V675C505 708 479 735 446 735H454C421 735 395 708 395 675V560Z" fill="#FFF8EC" fill-opacity="0.8"/>
+  <text x="450" y="780" text-anchor="middle" fill="#FFF8EC" font-family="Verdana, Arial, sans-serif" font-size="46" font-weight="700">Blessed Murti</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="112" y1="118" x2="790" y2="788" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B1A14"/>
+      <stop offset="0.5" stop-color="#7A1F2B"/>
+      <stop offset="1" stop-color="#C9962B"/>
+    </linearGradient>
+  </defs>
+</svg>
